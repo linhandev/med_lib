@@ -1,5 +1,5 @@
-vol_path='/home/lin/Desktop/vol_nii/'
-flood_path='/home/lin/Desktop/data/aorta/flood/'
+vol_path='/home/lin/Desktop/data/ann/vol/'
+flood_path='/home/lin/Desktop/data/ann/lab/'
 lab_path='/home/lin/Desktop/lab_ref/'
 
 for name in `ls $vol_path`
