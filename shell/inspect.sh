@@ -1,8 +1,7 @@
 vol_path='/home/lin/Desktop/data/ann/vol/'
-flood_path='/home/lin/Desktop/data/ann/lab/'
-lab_path='/home/lin/Desktop/lab_ref/'
+lab_path='/home/lin/Desktop/data/ann/lab/'
 
-for name in `ls $vol_path`
+for name in `ls $lab_path`
 do
   echo $name
 #  itksnap -g $vol_path$name -s $lab_path$name &
