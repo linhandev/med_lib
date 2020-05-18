@@ -3,12 +3,12 @@ import zipfile
 import os
 from tqdm import tqdm
 
-file_dir = "/home/aistudio/data/preprocess"
+file_dir = "/home/aistudio/data/zprep"
 zip_dir = "/home/aistudio/data/prep_zip"
 
 num = 1
 for file in tqdm(os.listdir(file_dir)):
-    curr_name = "liver-{}.zip".format(num)
+    curr_name = "tumor-xz-f1-{}.zip".format(num)
     curr_zip = os.path.join(zip_dir, curr_name)
 
     # print(file, curr_zip)

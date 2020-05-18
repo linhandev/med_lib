@@ -11,6 +11,10 @@ ind = 0
 for line in lines:
     fields = line.split(",")
     print(ind, fields)
+
+    while len(fields) <= 15:
+        fields.append("")
+
     ind += 1
     if fields[1] == "数据集简称":
         continue
@@ -27,12 +31,11 @@ for line in lines:
         continue
 
     if ismore:
-        print(fields[1], file=of)
+        print(fields[1], "\n", file=of)
         continue
 
     f = fields
-    while len(f) <= 15:
-        f.append("")
+
     print("\n| 名称      | 标注内容 | 类型 | 模态 | 数量 | 标签格式 | 文件格式 |", file=of)
     print("| - | - | - | - | - | - | - |", file=of)
 
