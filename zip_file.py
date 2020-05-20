@@ -16,6 +16,7 @@ for file in tqdm(os.listdir(file_dir)):
     f = zipfile.ZipFile(curr_zip, "a", zipfile.ZIP_DEFLATED)
     f.write(os.path.join(file_dir, file), file)
     f.close()
+    os.remove(os.path.join(file_dir, file))
     # f.write(os.path.join(file_dir, file), file)
     if os.path.getsize(curr_zip) / 1024 / 1024 / 1024 > 9.7:
         num += 1
