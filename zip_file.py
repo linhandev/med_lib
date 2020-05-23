@@ -7,9 +7,10 @@ file_dir = "/home/aistudio/data/zprep"
 zip_dir = "/home/aistudio/data/prep_zip"
 
 num = 1
+curr_name = "tumor-xz-{}.zip".format(num)
+curr_zip = os.path.join(zip_dir, curr_name)
+
 for file in tqdm(os.listdir(file_dir)):
-    curr_name = "tumor-xz-f1-{}.zip".format(num)
-    curr_zip = os.path.join(zip_dir, curr_name)
 
     # print(file, curr_zip)
 
@@ -17,13 +18,13 @@ for file in tqdm(os.listdir(file_dir)):
     f.write(os.path.join(file_dir, file), file)
     f.close()
     os.remove(os.path.join(file_dir, file))
-    # f.write(os.path.join(file_dir, file), file)
+
     if os.path.getsize(curr_zip) / 1024 / 1024 / 1024 > 9.7:
         num += 1
+        curr_name = "tumor-xz-{}.zip".format(num)
+        curr_zip = os.path.join(zip_dir, curr_name)
+
     # input("pause")
 
 
-# f = zipfile.ZipFile("./test.zip", "w", zipfile.ZIP_DEFLATED)
-# f.write("./cat.png")
-# print(os.path.getsize("./test.zip") / 1024 / 1024 / 1024)
-# f.close()
+# 6055

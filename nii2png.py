@@ -19,9 +19,9 @@ for nii_name in nii_names:
     vol = np.rot90(vol)
     vol = np.rot90(vol)
     vol = np.rot90(vol)
-    vol = windowlize_image(vol, 100, 0)  # ww wc
-    vol = vol.clip(-100, 100)
-    vol = (vol + 100) / 200 * 256
+    vol = windowlize_image(vol, 1500, -500)  # ww wc
+    # vol = vol.clip(-100, 100)
+    # vol = (vol + 100) / 200 * 256
     # vol = vol + 100
     print(vol.shape)
     if not os.path.exists(os.path.join(png_dir, nii_name)):

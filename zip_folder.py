@@ -19,6 +19,7 @@ for file in os.listdir(file_dir):
             print(os.path.join(dirpath, filename))
             f.write(os.path.join(dirpath, filename), os.path.join(file, filename))
     f.close()
+    os.removedirs(dirpath)
     # f.write(os.path.join(file_dir, file), file)
     if os.path.getsize(curr_zip) / 1024 / 1024 / 1024 > 9.7:
         num += 1

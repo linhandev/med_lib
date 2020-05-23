@@ -8,6 +8,36 @@ of = open(md_file, "w")
 # print(lines)
 ismore = False
 ind = 0
+count = 0
+direction = 0
+for line in lines:
+    fields = line.split(",")
+    print(ind, fields)
+    # print(fields[0] == "more")
+
+    while len(fields) <= 4:
+        fields.append("")
+
+    if fields[0].startswith("#"):
+        direction += 1
+        continue
+
+    if fields[1] == "数据集简称":
+        continue
+
+    if fields[0] == "more":
+        break
+
+    if fields[1] == "":
+        continue
+
+    # print(fields)
+    count += 1
+print("当前共收录 {} 个放向的 {} 个数据集".format(direction, count), file=of)
+
+# input("pause")
+
+
 for line in lines:
     fields = line.split(",")
     print(ind, fields)
