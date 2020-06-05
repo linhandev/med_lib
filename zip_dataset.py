@@ -24,6 +24,7 @@ zip_left_size = zip_tot_size
 
 for dirpath, dirnames, filenames in tqdm(os.walk(os.path.join(dataset_dir))):
     for filename in filenames:
+        print(dataset_name, dirpath[len(dataset_dir) :], filename)
         files_list.append(
             [
                 os.path.join(dirpath, filename),
@@ -34,6 +35,7 @@ for dirpath, dirnames, filenames in tqdm(os.walk(os.path.join(dataset_dir))):
         )
         list_size += os.path.getsize(os.path.join(dirpath, filename))
         if list_size >= zip_left_size * 1.1:  # 如果当前列表中未压缩文件的大小大于 1.1 倍zip包能装的大小
+            input("here")
             print(files_list)
             print("Writting {} file".format(len(files_list)))
             # 将列表里所有的文件写入zip
