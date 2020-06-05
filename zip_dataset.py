@@ -7,7 +7,8 @@ from tqdm import tqdm
 
 dataset_dir = "/media/1tDisk/data/processing/siim"
 zip_dir = "/media/1tDisk/data/processing/siim_zip"
-dataset_name = "siim"
+dataset_name = dataset_dir.split("/")[-1]
+print(dataset_name)
 
 zip_num = 1
 curr_name = "{}-{}.zip".format(dataset_name, zip_num)
@@ -26,7 +27,9 @@ for dirpath, dirnames, filenames in tqdm(os.walk(os.path.join(dataset_dir))):
         files_list.append(
             [
                 os.path.join(dirpath, filename),
-                os.path.join(dirpath[len(dataset_dir) :], filename),
+                os.path.join(
+                    dataset_name, dirpath[len(dataset_dir) :], filename
+                ),
             ]
         )
         list_size += os.path.getsize(os.path.join(dirpath, filename))
