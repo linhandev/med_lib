@@ -33,7 +33,7 @@ for line in lines:
 
     # print(fields)
     count += 1
-print("当前共收录 {} 个放向的 {} 个数据集".format(direction, count), file=of)
+print("当前共收录 {} 个方向的 {} 个数据集".format(direction, count), file=of)
 
 # input("pause")
 
