@@ -36,7 +36,7 @@ for dirpath, dirnames, filenames in tqdm(os.walk(os.path.join(dataset_dir))):
             for pair in files_list:
                 f.write(pair[0], pair[1])
             curr_size = os.path.getsize(curr_zip_path)
-            print("curr size is: {} M".format(curr_size/1024**2) )
+            print("curr size is: {} M".format(curr_size / 1024 ** 2))
             files_list = []
             if curr_size >= zip_tot_size:
                 f.close()
@@ -44,7 +44,8 @@ for dirpath, dirnames, filenames in tqdm(os.walk(os.path.join(dataset_dir))):
                 curr_name = "{}-{}.zip".format(dataset_name, zip_num)
                 curr_zip_path = os.path.join(zip_dir, curr_name)
                 f = zipfile.ZipFile(curr_zip_path, "a", zipfile.ZIP_DEFLATED)
-                print("+++ opening new zip: {}  +++".format( curr_name) )
+                print("+++ opening new zip: {}  +++".format(curr_name))
+                zip_left_space = zip_tot_size
             else:
                 zip_left_space = zip_tot_size - curr_size
 
