@@ -6,10 +6,11 @@ from tqdm import tqdm
 
 file_dir = "/home/aistudio/data/preprocess"
 zip_dir = "/home/aistudio/data/prep_zip"
+dataset_name = "siim"
 
 num = 1
 for file in os.listdir(file_dir):
-    curr_name = "liver-{}.zip".format(num)
+    curr_name = "{}-{}.zip".format(dataset_name, num)
     curr_zip = os.path.join(zip_dir, curr_name)
 
     print(file, curr_zip)
@@ -23,11 +24,12 @@ for file in os.listdir(file_dir):
             f.write(
                 os.path.join(dirpath, filename), os.path.join(file, filename)
             )
+        if os.path.getsize(curr_zip) / 1024 / 1024 / 1024 > 9.7:
+            num += 1
+            f.close()
     f.close()
-    os.removedirs(dirpath)
+    # os.removedirs(dirpath)
     # f.write(os.path.join(file_dir, file), file)
-    if os.path.getsize(curr_zip) / 1024 / 1024 / 1024 > 9.7:
-        num += 1
 
 
 # f = zipfile.ZipFile("./test.zip", "w", zipfile.ZIP_DEFLATED)
