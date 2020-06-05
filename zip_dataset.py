@@ -8,7 +8,7 @@ from tqdm import tqdm
 dataset_dir = "/media/1tDisk/data/processing/siim"
 zip_dir = "/media/1tDisk/data/processing/siim_zip"
 dataset_name = dataset_dir.split("/")[-1]
-print(dataset_name)
+# print(dataset_name)
 
 zip_num = 1
 curr_name = "{}-{}.zip".format(dataset_name, zip_num)
@@ -34,15 +34,17 @@ for dirpath, dirnames, filenames in tqdm(os.walk(os.path.join(dataset_dir))):
         )
         list_size += os.path.getsize(os.path.join(dirpath, filename))
         if list_size >= zip_left_size * 1.1:  # 如果当前列表中未压缩文件的大小大于 1.1 倍zip包能装的大小
-            list_size = 0
             print(files_list)
             print("Writting {} file".format(len(files_list)))
             # 将列表里所有的文件写入zip
             for pair in files_list:
                 f.write(pair[0], pair[1])
+            files_list = []
+            list_size = 0
+
             curr_size = os.path.getsize(curr_zip_path)
             print("curr size is: {} M".format(curr_size / 1024 ** 2))
-            files_list = []
+
             if curr_size >= zip_tot_size:
                 f.close()
                 zip_num += 1
