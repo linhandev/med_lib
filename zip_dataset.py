@@ -16,7 +16,7 @@ f = zipfile.ZipFile(curr_zip_path, "a", zipfile.ZIP_DEFLATED)
 
 files_list = []
 list_size = 0
-zip_tot_size = 9.7 * 1024 * 1024 * 20
+zip_tot_size = 9.5 * 1024 * 1024 * 1024
 zip_left_size = zip_tot_size
 # 9.7 * 1024 * 1024 * 1024
 
