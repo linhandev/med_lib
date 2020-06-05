@@ -1,3 +1,13 @@
+# pj
+*.csv
+*.txt
+__model__
+__params__
+*.nii
+*.gz
+*.zip
+*.png
+
 # ---> Python
 # Byte-compiled / optimized / DLL files
 __pycache__/
