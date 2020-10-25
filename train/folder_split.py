@@ -2,8 +2,15 @@
 import os
 import shutil
 import random
+import argparse
 
 # shutil.move("/home/lin/Desktop/a/test", "/home/lin/Desktop/b")  # 递归移动
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--base_dir", type=str, default="/home/lin/Desktop/data/aorta/dataset/")
+parser.add_argument("--img_folder", type=str, default="/home/lin/Desktop/data/aorta/dataset/scan/")
+parser.add_argument("--lab_folder", type=str, default="/home/lin/Desktop/data/aorta/dataset/label/")
+args = parser.parse_args()
 
 
 def listdir(path):
@@ -25,7 +32,7 @@ def mv(curr, dest):
 
 
 split = [8, 2, 0]  # train/val/test
-base_dir = "/home/lin/Desktop/data/aorta/dataset/"
+base_dir = args.base_dir
 folders = ["images", "annotations"]
 sub_folders = ["train", "val", "test"]
 if not os.path.exists(base_dir):
@@ -33,8 +40,8 @@ if not os.path.exists(base_dir):
         for fd2 in sub_folders:
             os.makedirs(os.path.join(base_dir, fd1, fd2))
 
-img_folder = "/home/lin/Desktop/data/aorta/dataset/scan/"
-lab_folder = "/home/lin/Desktop/data/aorta/dataset/label/"
+img_folder = args.img_folder
+lab_folder = args.lab_folder
 
 img_names = listdir(img_folder)
 lab_names = listdir(lab_folder)

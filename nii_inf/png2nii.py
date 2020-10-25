@@ -5,14 +5,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import ndimage
 import argparse
-from util.util import to_pinyin
 from tqdm import tqdm
 
 
+from util.util import to_pinyin
+import util.util as util
+
+
 parser = argparse.ArgumentParser()
-parser.add_argument(
-    "--scan_dir", type=str, default="/home/lin/Desktop/data/aorta/external/nii_512/"
-)
+# /home/lin/Desktop/data/aorta/nii/scan
+# /home/lin/Desktop/data/aorta/external/nii_512/
+parser.add_argument("--scan_dir", type=str, default="/home/lin/Desktop/data/aorta/nii/scan")
 parser.add_argument("--seg_dir", type=str, default="./seg")
 parser.add_argument("--png_dir", type=str, default="./img")
 args = parser.parse_args()
@@ -36,9 +39,7 @@ for patient in tqdm(patient_names):
     #     continue
     print("----------------")
     print(patient)
-    img_names = [
-        n for n in all_imgs if n.split("-")[0] == patient and n.endswith("mask.png")
-    ]
+    img_names = [n for n in all_imgs if n.split("-")[0] == patient and n.endswith("mask.png")]
     img_names.sort(key=lambda n: int(n.split("-")[1].split("_")[0]))
     print(img_names)
     print(len(img_names))
@@ -59,12 +60,11 @@ for patient in tqdm(patient_names):
         print(os.path.join(args.scan_dir, patient + ".nii.gz"))
         scanf = nib.load(os.path.join(args.scan_dir, patient + ".nii.gz"))
         scan_header = scanf.header
-        # print(scan_header)
     except:
-        scanf = nib.load(os.path.join(args.scan_dir, "于伟军_20201009214505482.nii"))
+        scanf = nib.load(os.path.join(args.scan_dir, "严文香_20201024212358608.nii.gz"))
         scan_header = scanf.header
         print(patient, "error")
-
+    img_data = util.filter_largest_volume(img_data, mode="hard")
     newf = nib.Nifti1Image(img_data.astype(np.float64), scanf.affine, scan_header)
-    nib.save(newf, os.path.join(args.seg_dir, to_pinyin(patient) + ".nii.gz"))
+    nib.save(newf, os.path.join(args.seg_dir, patient + ".nii.gz"))
     # input("here")

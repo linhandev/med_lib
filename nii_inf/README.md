@@ -11,8 +11,6 @@ done
 
 
 
-
-
 count=0
 for f in `ls`;
 do count=`expr $count + 1`;
