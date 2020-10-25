@@ -3,6 +3,8 @@ import argparse
 import os
 import sys
 import math
+from multiprocessing import Pool
+import time
 
 from tqdm import tqdm
 import numpy as np
@@ -22,11 +24,12 @@ args = parser.parse_args()
 
 
 class Polygon:
-    def __init__(self, points, height):
+    def __init__(self, points, height, pixdim):
         self.points = points
         self.height = height
         self.center = [0, 0]
         self.diameters = []
+        self.pixdim = pixdim
         # 计算边缘位置平均数做圆心
         # TODO: 研究用霍夫圆算圆心
         # TODO: 检验圆心是不是真的在圆里面
@@ -51,7 +54,7 @@ class Polygon:
         plt.imshow(img)
         plt.show()
 
-    def cal_diameters(self, ang_range=[0, np.pi], split=30, pixdim=1):
+    def cal_diameters(self, ang_range=[0, np.pi], split=30):
         """用类似二分的方法，平行线夹计算管径.
 
         y - y0 + d = k ( x - x0 )：d是这根线在y轴上移动的距离
@@ -115,7 +118,7 @@ class Polygon:
                         break
                 return d
 
-            diameters.append((binary_search(100) - binary_search(-100)) * np.abs(np.cos(alpha)) * pixdim)
+            diameters.append((binary_search(50) - binary_search(-50)) * np.abs(np.cos(alpha)) * self.pixdim)
         self.diameters = diameters
         return diameters
         # print(diameters)
@@ -163,6 +166,10 @@ def blood_sort(polygons):
     return ordered
 
 
+def cal(polygon):
+    polygon.cal_diameters()
+
+
 def cal_diameter(seg_path):
     """计算seg_path这个nii分割文件的所有管径，返回.
 
@@ -185,6 +192,7 @@ def cal_diameter(seg_path):
         Description of returned object.
 
     """
+    start = int(time.time())
     segf = nib.load(seg_path)
     seg_data = segf.get_fdata()
     pixdim = segf.header["pixdim"][1]
@@ -201,14 +209,17 @@ def cal_diameter(seg_path):
             points = []
             for x, y in zip(xs, ys):
                 points.append([x, y])
-            polygons.append(Polygon(points, height))
+            polygons.append(Polygon(points, height, pixdim))
     polygons = blood_sort(polygons)
-    # for p in polygons:
-    #     p.plot()
-    for p in tqdm(polygons):
-        p.cal_diameters(pixdim=pixdim)
+    p = Pool(8)
+    p.map(cal, polygons)
+    # for p in tqdm(polygons):
+    #     p.cal_diameters(pixdim=pixdim)
+
     print(os.path.join(args.out_dir, seg_path.split("/")[-1]))
     f = open(os.path.join(args.out_dir, seg_path.split("/")[-1].rstrip(".gz").rstrip(".nii")) + ".csv", "w")
+    print(int(time.time()) - start)
+    print(int(time.time()) - start, end="\n", file=f)
     for p in polygons:
         print(p.height, end=",", file=f)
         for d in p.diameters:
@@ -216,11 +227,11 @@ def cal_diameter(seg_path):
         print(end="\n", file=f)
     f.close()
 
-    # input("here")
-
 
 if __name__ == "__main__":
     names = os.listdir(args.in_dir)
-    [os.path.join(args.in_dir, name) for name in names]
+    # p = Pool(8)
+    # p.map(cal_diameter, [os.path.join(args.in_dir, name) for name in names[:32]])
+
     for name in names:
         cal_diameter(os.path.join(args.in_dir, name))

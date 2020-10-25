@@ -28,7 +28,6 @@ def to_512(name):
 
 
 if __name__ == "__main__":
-
     names = os.listdir(args.scan_dir)
     print(names)
     p = Pool(8)
