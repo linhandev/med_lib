@@ -1,6 +1,8 @@
 import os
 import logging
 import math
+import concurrent.futures
+import multiprocessing
 
 import nibabel as nib
 import numpy as np
@@ -54,6 +56,38 @@ def filter_largest_volume(label, ratio=1.2, mode="soft"):
 labels = []
 
 
+def nii2png(
+    scan_path, scan_img_dir, label_path=None, label_img_dir=None, rot=1, wwwl=(400, 0), scan_only=False, thresh=None
+):
+    scanf = nib.load(scan_path)
+    scan_data = scanf.get_fdata()
+    name = os.path.basename(scan_path)
+
+    # if vol.shape[0] == 1024:
+    #     vol = scipy.ndimage.interpolation.zoom(vol, [0.5, 0.5, 1], order=1 if islabel else 3)
+
+    for _ in range(rot):
+        scan_data = np.rot90(scan_data)
+
+    if not os.path.exists(scan_img_dir):
+        os.makedirs(scan_img_dir)
+
+    wl, wh = (wwwl[1] - wwwl[0] / 2, wwwl[1] + wwwl[0] / 2)
+    scan_data = scan_data.astype("float32").clip(wl, wh)
+    scan_data = (scan_data - wl) / (wh - wl) * 256
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
+        for ind in range(1, scan_data.shape[2] - 1):
+            slice = scan_data[:, :, ind - 1 : ind + 2]
+            file_path = os.path.join(scan_img_dir, "{}-{}.png".format(name.rstrip(".gz").rstrip(".nii"), ind))
+            executor.submit(save_png, slice, file_path)
+
+
+def save_png(slice, file_path):
+    # print(file_path)
+    cv2.imwrite(file_path, slice)
+
+
 def nii2png_single(nii_path, png_folder, rot=1, wwwl=(256, 0), islabel=False, thresh=0):
     """将一个nii扫描转换成一系列图片，并进行简单的检查.
     # TODO: 检查是否只有一个连通块
@@ -73,10 +107,6 @@ def nii2png_single(nii_path, png_folder, rot=1, wwwl=(256, 0), islabel=False, th
     volf = nib.load(nii_path)
     nii_name = os.path.basename(nii_path)
     vol = volf.get_fdata()
-    if vol.shape[2] == 1:
-        print(nii_path)
-        # input("here")
-        return
     if vol.shape[0] == 1024:
         vol = scipy.ndimage.interpolation.zoom(vol, [0.5, 0.5, 1], order=1 if islabel else 3)
     for _ in range(rot):
@@ -143,6 +173,7 @@ def nii2png_folder(nii_folder, png_folder, rot=1, wwwl=(400, 0), subfolder=False
 
 
 def check_nii_match(scan_dir, label_dir, remove=False):
+    # TODO: 用片间间隔和大小计算片内方向的边长，太大或者太小报错
     """检查两个目录下的扫描和标签是不是对的上.
 
     Parameters

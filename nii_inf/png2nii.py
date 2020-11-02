@@ -47,24 +47,36 @@ for patient in tqdm(patient_names):
     img_data = np.zeros([512, 512, len(img_names) + 2])
     print(img_data.shape)
 
+    # with ThreadPoolExecutor(max_workers=16) as exe_pool:
+    #     tasks = [
+    #         exe_pool.submit(self.process_worker, imgs, idx, use_pr)
+    #         for idx in range(len(imgs))
+    #     ]
+
     for img_name in img_names:
         img = cv2.imread(os.path.join(args.png_dir, img_name))
         ind = int(img_name.split("-")[1].split("_")[0])
         img = img.swapaxes(0, 1)
-        if len(patient) > 5:
+        if "\u4e00" <= patient[0] <= "\u9fff":
+            img = img[:, ::-1, 0]
+        elif len(patient) > 5:
             img = img[:, ::-1, 0]
         else:
             img = img[::-1, ::, 0]
         img_data[:, :, ind] = img
     try:
         print(os.path.join(args.scan_dir, patient + ".nii.gz"))
-        scanf = nib.load(os.path.join(args.scan_dir, patient + ".nii.gz"))
+        scanf = nib.load(os.path.join(args.scan_dir, patient + ".nii"))
         scan_header = scanf.header
     except:
-        scanf = nib.load(os.path.join(args.scan_dir, "严文香_20201024212358608.nii.gz"))
-        scan_header = scanf.header
         print(patient, "error")
-    img_data = util.filter_largest_volume(img_data, mode="hard")
+        scanf = nib.load(os.path.join(args.scan_dir, "张金华_20201024213424575a.nii"))
+        scan_header = scanf.header
+
+    img_data[:, :, -1] = img_data[:, :, -2]
+    img_data[:, :, 0] = img_data[:, :, 1]
+
+    # img_data = util.filter_largest_volume(img_data, mode="hard")
     newf = nib.Nifti1Image(img_data.astype(np.float64), scanf.affine, scan_header)
     nib.save(newf, os.path.join(args.seg_dir, patient + ".nii.gz"))
     # input("here")
