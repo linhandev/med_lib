@@ -78,7 +78,8 @@ def nii2png(
 
     with concurrent.futures.ThreadPoolExecutor(max_workers=multiprocessing.cpu_count()) as executor:
         for ind in range(1, scan_data.shape[2] - 1):
-            slice = scan_data[:, :, ind - 1 : ind + 2]
+            # slice = scan_data[:, :, ind - 1 : ind + 2]
+            slice = scan_data[:, :, ind]
             file_path = os.path.join(scan_img_dir, "{}-{}.png".format(name.rstrip(".gz").rstrip(".nii"), ind))
             executor.submit(save_png, slice, file_path)
 
