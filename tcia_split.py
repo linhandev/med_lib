@@ -7,7 +7,7 @@ parser.add_argument("-o", "--output", type=str, required=True)
 parser.add_argument("-l", "--line", type=int, default=150)
 args = parser.parse_args()
 
-file_name = os.path.basename(args.input).rstrip(".tcia")
+file_name = os.path.basename(args.input)[:-5]
 if not os.path.exists(os.path.join(args.output, file_name)):
     os.makedirs(os.path.join(args.output, file_name))
     print("makedirs")
@@ -32,7 +32,6 @@ while (part + 1) * args.line < len(lines):
 outpath = os.path.join(args.output, file_name, str(part) + ".tcia")
 with open(outpath, "w") as f:
     for h in header:
-        print(h)
         print(h, end="", file=f)
     for idx in range(part * args.line, len(lines)):
         print(lines[idx], end="", file=f)
