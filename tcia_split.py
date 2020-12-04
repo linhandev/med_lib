@@ -4,12 +4,13 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("-i", "--input", type=str, required=True)
 parser.add_argument("-o", "--output", type=str, required=True)
-parser.add_argument("-l", "--line", type=int, default=100)
+parser.add_argument("-l", "--line", type=int, default=150)
 args = parser.parse_args()
 
 file_name = os.path.basename(args.input)
 if not os.path.exists(os.path.join(args.output, file_name)):
     os.makedirs(os.path.join(args.output, file_name))
+    print("makedirs")
 
 with open(args.input) as f:
     lines = f.readlines()
