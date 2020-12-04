@@ -1,23 +1,38 @@
 import os
+import argparse
 
+parser = argparse.ArgumentParser()
+parser.add_argument("-i", "--input", type=str, required=True)
+parser.add_argument("-o", "--output", type=str, required=True)
+parser.add_argument("-l", "--line", type=int, default=100)
+args = parser.parse_args()
 
-tcia_path = "/home/lin/Desktop/4dlung.tcia"
-splie_folder = "/home/lin/Desktop/4dlung"
-part_count = 10
+if not os.path.exists(args.output):
+    os.makedirs(args.output)
 
-
-with open(tcia_path) as f:
+with open(args.input) as f:
     lines = f.readlines()
-headers = lines[:6]
-print(headers)
+header = []
+for _ in range(6):
+    header.append(lines.pop(0))
 
-records_per_split = int((len(lines) - 6) / part_count) + 1
+file_name = os.path.basename(args.input)
+print("total lines: ", len(lines))
+part = 0
+while (part + 1) * args.line < len(lines):
+    outpath = os.path.join(args.output, file_name + "-" + str(part))
+    with open(outpath, "w") as f:
+        for h in header:
+            print(h)
+            print(h, end="", file=f)
+        for idx in range(part * args.line, (part + 1) * args.line):
+            print(lines[idx], end="", file=f)
+    part += 1
 
-for file_ind in range(part_count):
-    split_path = os.path.join(splie_folder, "{}.tcia".format(file_ind))
-    with open(split_path, "w") as f:
-        for header in headers:
-            print(header, file=f, end="")
-        for ind in range(records_per_split * file_ind, min(records_per_split * (file_ind + 1), len(lines) - 6)):
-            print(ind)
-            print(lines[ind + 6], file=f, end="")
+outpath = os.path.join(args.output, file_name + "-" + str(part))
+with open(outpath, "w") as f:
+    for h in header:
+        print(h)
+        print(h, end="", file=f)
+    for idx in range(part * args.line, len(lines)):
+        print(lines[idx], end="", file=f)
